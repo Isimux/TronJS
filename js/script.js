@@ -41,11 +41,9 @@ $(document).ready(function () {
     */
     function addRival() {
         var id = game.rivals.length;
-        $("body").append($("<convas></canvas>")
-                        .attr("id", "rival" + id + "Canavas")
-                        .attr("width", 600)
-                        .attr("height", 600));
-        game.rivals.push({
+        $("body").append($("<canvas />", {width:'600', height:'600', id: 'rival' + id + 'Canavas'}));
+        
+        var rival = {
             id: id,
             x: game.width / 2 - 50,
             y: 5,
@@ -57,7 +55,8 @@ $(document).ready(function () {
             lastspeedstep: false,
             trace: [],
             context: document.getElementById("rival" + id + "Canavas").getContext("2d")
-        });
+        }
+        game.rivals.push(rival);
     }
 
     //Référence des élément HTML
