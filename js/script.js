@@ -49,17 +49,24 @@ $(document).ready(function () {
     /*
 	 * Fonction qui contient la logique de jeux
     */
+    
+    /*
+    * up = 38
+    * down = 40
+    * left = 37
+    * right = 39
+    */
     function update() {
-        if (game.keys[37]) {
+        if (game.keys[37] && (game.player.keypressed !== 39)) {
             game.player.keypressed = 37;
         }
-        if (game.keys[39]) {
+        if (game.keys[39]&& (game.player.keypressed !== 37)) {
             game.player.keypressed = 39;
         }
-        if (game.keys[38]) {
+        if (game.keys[38]&& (game.player.keypressed !== 40)) {
             game.player.keypressed = 38;
         }
-        if (game.keys[40]) {
+        if (game.keys[40]&& (game.player.keypressed !== 38)) {
             game.player.keypressed = 40;
         }
         //////////////////////////////
