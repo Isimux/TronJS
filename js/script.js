@@ -29,12 +29,39 @@ $(document).ready(function () {
         rendered: false,
         keypressed: false,
         lastspeedstep: false,
-        trace: []
+        trace: [],
+        context: document.getElementById("playerCanavas").getContext("2d")
     };
+    
+    //Variable pour garder les adversaires
+    game.rivals = [];
+    
+    /*
+    * fonction pour ajouter un rival 
+    */
+    function addRival() {
+        var id = game.rivals.length;
+        $("body").append($("<convas></canvas>")
+                        .attr("id", "rival" + id + "Canavas")
+                        .attr("width", 600)
+                        .attr("height", 600));
+        game.rivals.push({
+            id: id,
+            x: game.width / 2 - 50,
+            y: 5,
+            width: 5,
+            height: 5,
+            speed: 2,
+            rendered: false,
+            keypressed: false,
+            lastspeedstep: false,
+            trace: [],
+            context: document.getElementById("rival" + id + "Canavas").getContext("2d")
+        });
+    }
 
     //Référence des élément HTML
     game.contextBackground = document.getElementById("backgroundCanvas").getContext("2d");
-    game.contextPlayer = document.getElementById("playerCanavas").getContext("2d");
     
 	/*
 	* Fonctions JQuerry liée au evenement des touches
@@ -144,14 +171,14 @@ $(document).ready(function () {
     */
 	function render() {
 
-        game.contextPlayer.fillStyle = "white";
+       game.player.context.fillStyle = "white";
         if (!game.player.rendered) {
-            game.contextPlayer.clearRect(0, 0, game.width, game.height);
-            game.contextPlayer.fillRect(game.player.x, game.player.y, game.player.width, game.player.height);
+           game.player.context.clearRect(0, 0, game.width, game.height);
+           game.player.context.fillRect(game.player.x, game.player.y, game.player.width, game.player.height);
             
             //render trace
             for(var i in game.player.trace) {
-                game.contextPlayer.fillRect(game.player.trace[i].x, game.player.trace[i].y, game.player.width, game.player.height);
+               game.player.context.fillRect(game.player.trace[i].x, game.player.trace[i].y, game.player.width, game.player.height);
             }
             
             game.player.rendered = true;
@@ -176,7 +203,9 @@ $(document).ready(function () {
     (function init() {
         loop();
     }());
-
+    
+    //test add rival
+    addRival();
 });
 
 //Support de comatibilité des navigateurs
@@ -190,3 +219,4 @@ window.requestAnimFrame = (function () {
             window.setTimeout(callback, 1000 / 30);
         };
 }());
+
