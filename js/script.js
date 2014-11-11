@@ -28,7 +28,8 @@ $(document).ready(function () {
         speed: 2,
         rendered: false,
         keypressed: false,
-        lastspeedstep: false
+        lastspeedstep: false,
+        trace: []
     };
 
     //Référence des élément HTML
@@ -71,30 +72,62 @@ $(document).ready(function () {
             if (game.player.keypressed === 37) {
                 if (game.player.x > 5) {
                     game.player.x -= game.player.speed;
+                    game.player.rendered = false;
                 }
-                game.player.rendered = false;
             }
             if (game.player.keypressed === 39) {
                 if (game.player.x < game.width - game.player.width - 5) {
                     game.player.x += game.player.speed;
+                    game.player.rendered = false;
                 }
-                game.player.rendered = false;
             }
             if (game.player.keypressed === 38) {
                 if (game.player.y > 5) {
                     game.player.y -= game.player.speed;
+                    game.player.rendered = false;
                 }
-                game.player.rendered = false;
+                else { game.player.y = 5; }
             }
             if (game.player.keypressed === 40) {
                 if (game.player.y < game.height - game.player.height - 5) {
                     game.player.y += game.player.speed;
+                    game.player.rendered = false;
                 }
-                game.player.rendered = false;
+                else { game.player.y = game.height - game.player.height - 5; }
             }
+            
+            //position checking
+            if(game.player.x < 5) game.player.x = 5;
+            else if (game.player.x > game.width - game.player.width - 5) { game.player.x = game.width - game.player.width - 5; }
+            else if (game.player.y < 5) { game.player.y = 5; }
+            else if (game.player.y > game.height - game.player.height - 5) { game.player.y = game.height - game.player.height - 5; }
+            
+            //check collision
+            var collision = (function(arr, player) {
+                var col = false;                
+                for (var i=0; i < arr.length-1; i++) {
+                    col = !(
+                        ( ( player.y + player.height ) < ( arr[i].y ) ) ||
+                        ( player.y > ( arr[i].y + player.height ) ) ||
+                        ( ( player.x + player.width ) < arr[i].x ) ||
+                        ( player.x > ( arr[i].x + player.width ) )
+                    );
+                    if (col) return true;
+                }
+                return false;
+            }(game.player.trace, game.player));
+            console.log(collision);
+            
             if (((new Date()) - game.player.lastspeedstep >= game.speedstep) && (game.player.speed < game.maxspeed)) {
                 game.player.speed += 1;
                 game.player.lastspeedstep = new Date();
+            }
+            
+            //save the trace
+            if(!game.player.trace.length || 
+               ((Math.abs(game.player.x - game.player.trace[game.player.trace.length-1].x) >= game.player.width) ||
+                (Math.abs(game.player.y - game.player.trace[game.player.trace.length-1].y) >= game.player.height))) {
+                game.player.trace.push({x: game.player.x, y: game.player.y });
             }
         }
     }
@@ -108,6 +141,12 @@ $(document).ready(function () {
         if (!game.player.rendered) {
             game.contextPlayer.clearRect(0, 0, game.width, game.height);
             game.contextPlayer.fillRect(game.player.x, game.player.y, game.player.width, game.player.height);
+            
+            //render trace
+            for(var i in game.player.trace) {
+                game.contextPlayer.fillRect(game.player.trace[i].x, game.player.trace[i].y, game.player.width, game.player.height);
+            }
+            
             game.player.rendered = true;
             console.log("render...");
         }
@@ -141,6 +180,6 @@ window.requestAnimFrame = (function () {
         window.oRequestAnimationFrame ||
         window.msRequestAnimationFrame ||
         function (callback) {
-            window.setTimeout(callback, 1000 / 60);
+            window.setTimeout(callback, 1000 / 30);
         };
 }());
