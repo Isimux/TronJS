@@ -46,7 +46,7 @@ $(document).ready(function () {
         var rival = {
             id: id,
             x: game.width / 2 - 50,
-            y: 5,
+            y: game.height-5,
             width: 5,
             height: 5,
             speed: 2,
@@ -172,17 +172,25 @@ $(document).ready(function () {
 
        game.player.context.fillStyle = "white";
         if (!game.player.rendered) {
-           game.player.context.clearRect(0, 0, game.width, game.height);
+           game.player.context.clearRect(game.player.x-game.player.speed, game.player.y-game.player.speed, (game.player.width *3)+game.player.speed, (game.player.height *3) +game.player.speed);
            game.player.context.fillRect(game.player.x, game.player.y, game.player.width, game.player.height);
+            
             
             //render trace
             for(var i in game.player.trace) {
                game.player.context.fillRect(game.player.trace[i].x, game.player.trace[i].y, game.player.width, game.player.height);
             }
             
+            
             game.player.rendered = true;
             console.log("render...");
         }
+         //render rival
+        /*console.log(game.rivals[0]);
+            if(game.rivals.length){
+                 game.rivals[0].context.fillStyle = "white";
+                 game.rivals[0].context.fillRect(game.rivals[0].x,game.rivals[0].y,game.rivals[0].width,game.rivals[0].height);
+            } */  
     }
 
     /*
@@ -215,7 +223,7 @@ window.requestAnimFrame = (function () {
         window.oRequestAnimationFrame ||
         window.msRequestAnimationFrame ||
         function (callback) {
-            window.setTimeout(callback, 1000 / 30);
+            window.setTimeout(callback, 1000 / 60);
         };
 }());
 
