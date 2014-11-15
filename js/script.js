@@ -17,7 +17,7 @@ $(document).ready(function () {
     game.speedstep = 5000;
 
     //Limite de la vitesse du joueur
-    game.maxspeed = 10;
+    game.maxspeed = 5;
 
     //Variable Qui contient les attribues du joueur
     game.player = {
@@ -30,7 +30,8 @@ $(document).ready(function () {
         keypressed: false,
         lastspeedstep: false,
         trace: [],
-        context: document.getElementById("playerCanavas").getContext("2d")
+        context: document.getElementById("playerCanavas").getContext("2d"),
+        alive : true
     };
     
     //Variable pour garder les adversaires
@@ -130,10 +131,10 @@ $(document).ready(function () {
             }
             
             //position checking
-            if(game.player.x < 5) game.player.x = 5;
-            else if (game.player.x > game.width - game.player.width - 5) { game.player.x = game.width - game.player.width - 5; }
-            else if (game.player.y < 5) { game.player.y = 5; }
-            else if (game.player.y > game.height - game.player.height - 5) { game.player.y = game.height - game.player.height - 5; }
+            if(game.player.x < 5) game.player.alive = false;
+            else if (game.player.x > game.width - game.player.width - 5) { game.player.alive=false; }
+            else if (game.player.y <= 5) { game.player.alive=false; }
+            else if (game.player.y >= game.height - game.player.height - 5) { game.player.alive=false; }
             
             //check collision
             var collision = (function(arr, player) {
@@ -145,7 +146,10 @@ $(document).ready(function () {
                         ( ( player.x + player.width ) < arr[i].x ) ||
                         ( player.x > ( arr[i].x + player.width ) )
                     );
-                    if (col) return true;
+                    if (col) {
+                        player.alive=false;
+                        return true;
+                    }
                 }
                 return false;
             }(game.player.trace, game.player));
@@ -170,8 +174,9 @@ $(document).ready(function () {
     */
 	function render() {
 
-       game.player.context.fillStyle = "white";
-        if (!game.player.rendered) {
+       if(game.player.alive) game.player.context.fillStyle = "white";
+        else game.player.context.fillStyle="red";
+        if (!game.player.rendered && game.player.alive) {
            game.player.context.clearRect(game.player.x-game.player.speed, game.player.y-game.player.speed, (game.player.width *3)+game.player.speed, (game.player.height *3) +game.player.speed);
            game.player.context.fillRect(game.player.x, game.player.y, game.player.width, game.player.height);
             
@@ -183,7 +188,6 @@ $(document).ready(function () {
             
             
             game.player.rendered = true;
-            console.log("render...");
         }
          //render rival
         /*console.log(game.rivals[0]);
